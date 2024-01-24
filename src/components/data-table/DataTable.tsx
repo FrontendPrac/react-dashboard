@@ -6,6 +6,7 @@ import {
 } from "@mui/x-data-grid";
 import "./dataTable.scss";
 import { Link } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   columns: GridColDef[];
@@ -14,9 +15,24 @@ type Props = {
 };
 
 const DataTable = (props: Props) => {
+  //* 뮤테이션
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (id: number) => {
+      return fetch(`http://localhost:8800/api/${props.slug}/${id}`, {
+        method: "delete",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`all${props.slug}`] });
+    },
+  });
+
   //* 유저 삭제 함수
   const handleDelete = (id: number) => {
-    console.log(id + "has been deleted!");
+    // console.log(id + "has been deleted!");
+    mutation.mutate(id);
   };
 
   //* 유저 액션 컬럼

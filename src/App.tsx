@@ -9,10 +9,13 @@ import Login from "./pages/login/Login";
 import "./styles/global.scss";
 import User from "./pages/user/User";
 import Product from "./pages/product/Product";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
   //* 레이아웃
   const Layout = () => {
+    const queryClient = new QueryClient();
+
     return (
       <div className="main">
         <Navbar />
@@ -22,7 +25,9 @@ function App() {
           </div>
           <div className="contentContainer">
             {/* 동적인 컴포넌트 */}
-            <Outlet />
+            <QueryClientProvider client={queryClient}>
+              <Outlet />
+            </QueryClientProvider>
           </div>
         </div>
         <Footer />

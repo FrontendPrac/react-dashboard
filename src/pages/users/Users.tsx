@@ -4,6 +4,7 @@ import "./users.scss";
 import { userRows } from "../../data";
 import { useState } from "react";
 import Add from "../../components/add/Add";
+import { useQuery } from "@tanstack/react-query";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 90 },
@@ -57,13 +58,25 @@ const Users = () => {
   //* 모달 상태
   const [open, setOpen] = useState(false);
 
+  //* 쿼리
+  const { isLoading, data } = useQuery({
+    queryKey: ["allusers"],
+    queryFn: () =>
+      fetch("http://localhost:8800/api/users").then((res) => res.json()),
+  });
+
   return (
     <div className="users">
       <div className="info">
         <h1>Users</h1>
         <button onClick={() => setOpen(true)}>Add New User</button>
       </div>
-      <DataTable columns={columns} rows={userRows} slug="users" />
+      {isLoading ? (
+        "Loading..."
+      ) : (
+        <DataTable columns={columns} rows={data} slug="users" />
+      )}
+
       {open && <Add setOpen={setOpen} slug="user" columns={columns} />}
     </div>
   );
